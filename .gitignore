@@ -1,2 +1,7 @@
-./
 *.json
+
+!templates/*.json
+
+**/__pycache__/
+.idea/
+

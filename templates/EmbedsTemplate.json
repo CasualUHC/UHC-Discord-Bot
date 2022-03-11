@@ -1,0 +1,62 @@
+{
+  "faq": {
+    "World Border": [
+      "The world border will begin to shrink after 10 minutes of the game starting.",
+      "The final size of the world border will be 20x20. When the game starts information will be displayed on your hud.",
+      "You can toggle this on and off by using /coords.",
+      "There will be a 10 minute grace period and the world border will start moving at around 5 minutes.",
+      "You will be able to place and break blocks outside the world border.",
+      "Minutes after the world border has fully closed everyone alive will be given the glowing effect."
+    ],
+    "Mods": [
+      "This topic can get a little controversial at times but the main gist of it is don't use anything that you give an unfair advantage to others.",
+      "If possible it is best to play with a vanilla client or a client without many mods.",
+      "Tweakaroo is the most controversial mod I see and what I can say is if you don't need it, it is just best not to use it.",
+      "I have no way of knowing if you are abusing this, but spectators are watching and punishment can be given if you are seen abusing it."
+    ],
+    "Teams": [
+      "For main events, teams will always consist of 5 people.",
+      "This does not mean you need a full team to participate in the events.",
+      "For Practice Rounds or Fun Rules, team size may vary.",
+      "If you do not have a full team you are welcome to join another team for that event."
+    ],
+    "Miscellaneous": [
+      "- Players will drop golden apples on death.\n",
+      "- The End is allowed.\n"
+    ],
+    "colour": 65372
+  },
+  "rules": {
+    "Description": [
+      ":scroll: `Portal Trapping is not allowed`\n",
+      "No one wants to die leaving or entering the Nether / End\n\n",
+      ":scroll: `Level 2 Potions are not allowed`\n",
+      "All level 2 potions are not allowed, this also includes instant health 1 and 2\n",
+      "Everything else is fair game\n\n",
+      ":scroll: `Sky Bases are a No`\n",
+      "No one wants to build up to a base in mid-air\n",
+      "Don't make a base in the sky Please.\n\n",
+      ":scroll: `Strip Mining is Allowed`\n",
+      "I've decided to make the change to allow strip mining\n",
+      "Way too many variables to deal with if disallowed :)\n\n",
+      ":scroll: `No Nether Roof`\n",
+      "Please. Just. Don't.\n\n",
+      ":scroll: `No Cross Teaming`\n",
+      "Cross Teaming will create an unfair advantage for other\n",
+      "teams, therefore not allowed.\n\n",
+      ":scroll: `Exploits / Mods`\n",
+      "Exploits are **strictly prohibited**.\n",
+      "As per mods, anything that would give you an advantage over\n",
+      "a vanilla client is not allowed. (Gentleman's Rules)\n\n",
+      ":scroll: `Family Friendly In Public`\n",
+      "When talking in a public voice chat or in general game chat try to stay as family friendly as possible\n\n",
+      ":exclamation: `Gentleman's rules`\n",
+      "These rules do not cover everything!\n",
+      "The use of loopholes to break these rules will result in punishment to you or your team.\n\n",
+      ":exclamation: `Ask Questions`\n",
+      "If something is unclear or you have a questions\n",
+      "feel free to ping Sensei!"
+    ],
+    "colour": 16711782
+  }
+}

@@ -12,19 +12,23 @@ class Admin(commands.Cog):
         self.db = TeamsDB()
 
     @commands.command(name='json')
+    @commands.has_any_role('Devs', 'Administrator')
     async def _json(self, ctx):
         self.db.to_json()
         await ctx.send(file=discord.File('Teams.json'))
 
     @commands.command(name='faq')
+    @commands.has_any_role('Devs', 'Administrator')
     async def faq(self, ctx):
         await ctx.send(embed=embeds.faq())
 
     @commands.command(name='rules')
+    @commands.has_any_role('Devs', 'Administrator')
     async def rules(self, ctx):
         await ctx.send(embed=embeds.rules())
 
     @commands.command(name='all_stats')
+    @commands.has_any_role('Devs', 'Administrator')
     async def all_stats(self, ctx):
         database = PlayersDB()
         player_list = [result['name'] for result in database.db.find({})]
@@ -32,6 +36,7 @@ class Admin(commands.Cog):
             await ctx.send(embed=database.get_all_stats(player=player))
 
     @commands.command(name='reload')
+    @commands.has_any_role('Devs', 'Administrator')
     async def reload(self, ctx):
         config.initialise()
         await ctx.send("Reloaded Config!")
