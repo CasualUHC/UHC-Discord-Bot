@@ -1,0 +1,55 @@
+import discord
+from discord.ext import commands
+from discord_slash import SlashContext, cog_ext
+
+from utils.db import TeamsDB, PlayersDB
+from utils import embeds, slash, config
+
+
+class Admin(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.db = TeamsDB()
+
+    @commands.command(name='json')
+    async def _json(self, ctx):
+        self.db.to_json()
+        await ctx.send(file=discord.File('Teams.json'))
+
+    @commands.command(name='faq')
+    async def faq(self, ctx):
+        await ctx.send(embed=embeds.faq())
+
+    @commands.command(name='rules')
+    async def rules(self, ctx):
+        await ctx.send(embed=embeds.rules())
+
+    @commands.command(name='all_stats')
+    async def all_stats(self, ctx):
+        database = PlayersDB()
+        player_list = [result['name'] for result in database.db.find({})]
+        for player in player_list:
+            await ctx.send(embed=database.get_all_stats(player=player))
+
+    @commands.command(name='reload')
+    async def reload(self, ctx):
+        config.initialise()
+        await ctx.send("Reloaded Config!")
+
+    @cog_ext.cog_slash(
+        name='poll',
+        guild_ids=config.guilds,
+        description='create a poll',
+        options=slash.poll_options
+    )
+    # probably a better way to do this, but I'm too damn tired to figure out kwargs bullshit right now
+    async def _poll(self, ctx: SlashContext, poll_title: str, poll_description: str, **args):
+        options = [option for option in args.values() if option]
+
+        msg = await ctx.send(embed=embeds.poll(title=poll_title, description=poll_description, options=options))
+        for i in range(len(options)):
+            await msg.add_reaction(embeds.letter_emojis[i])
+
+
+def setup(bot):
+    bot.add_cog(Admin(bot))
