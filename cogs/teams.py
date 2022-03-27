@@ -1,3 +1,4 @@
+import discord_slash
 from discord.ext import commands
 from discord_slash import cog_ext
 from discord_slash.model import SlashCommandPermissionType
@@ -25,8 +26,7 @@ class Teams(commands.Cog):
             slash.server_prefix,
             slash.server_name,
             slash.server_logo,
-            slash.server_colour,
-            slash.server_discord_colour
+            slash.server_colour
         ],
         default_permission=False,
         permissions={
@@ -35,14 +35,14 @@ class Teams(commands.Cog):
             ]
         }
     )
-    async def add_team(self, ctx, prefix: str, name: str, logo: str, server_colour: str, discord_colour: str):
+    async def add_team(self, ctx, prefix: str, name: str, logo: str, server_colour: str):
         await ctx.send(
             embed=self.db.add_team(
                 prefix=prefix,
                 name=name,
                 logo=logo,
                 colour=server_colour,
-                discord_colour=discord_colour
+                guilds=self.bot.guilds
             )
         )
 
@@ -58,16 +58,16 @@ class Teams(commands.Cog):
             slash.ign
         ]
     )
-    async def add_player(self, ctx, server: str, ign: str):
-        if self.bot.guilds.get_role(admins) not in ctx.author.roles:
-            if ctx.guilds.get_role(config.teams.get(server)) not in ctx.author.roles:
+    async def add_player(self, ctx: discord_slash.SlashContext, server: str, ign: str):
+        if ctx.guild.get_role(admins[0]) not in ctx.author.roles:
+            if ctx.guild.get_role(config.teams.get(server)) not in ctx.author.roles:
                 await ctx.send(f'You do not have permission add players to {server}')
                 return
 
         username = MojangAPI.get_username(MojangAPI.get_uuid(ign))
 
         if username:
-            await ctx.send(embed=self.db.add_player(server, username))
+            await ctx.send(embed=self.db.add_player(server, username, ctx.guild))
         else:
             await ctx.send(f'\'{ign}\' is not a valid IGN!')
 
@@ -82,16 +82,15 @@ class Teams(commands.Cog):
         ]
     )
     async def remove_player(self, ctx, server: str, ign: str):
-        # -----uncomment the code below on deploy-----
-        # if self.bot.guilds.get_role(admin) not in ctx.author.roles:
-        #     if ctx.guilds.get_role(teamConfig.team_roles.get(server)) not in ctx.author.roles:
-        #         await ctx.send(f'You do not have permission remove players from {server}')
-        #         return
+        if ctx.guild.get_role(admins[0]) not in ctx.author.roles:
+            if ctx.guild.get_role(config.teams.get(server)) not in ctx.author.roles:
+                await ctx.send(f'You do not have permission remove players from {server}')
+                return
 
         username = MojangAPI.get_username(MojangAPI.get_uuid(ign))
 
         if username:
-            await ctx.send(embed=self.db.remove_player(server, username))
+            await ctx.send(embed=self.db.remove_player(server, username, ctx.guild))
         else:
             await ctx.send(f'\'{ign}\' is not a valid IGN')
 
@@ -105,7 +104,7 @@ class Teams(commands.Cog):
         ]
     )
     async def team_info(self, ctx, server: str):
-        await ctx.send(embed=self.db.info(server))
+        await ctx.send(embed=self.db.info(server, ctx.guild))
 
         self.db.to_json()
 

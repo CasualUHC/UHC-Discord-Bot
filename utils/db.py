@@ -29,20 +29,19 @@ class TeamsDB(object):
 
     # --------------------
 
-    def add_team(self, prefix: str, name: str, logo: str, colour: str, discord_colour: str):
+    def add_team(self, prefix: str, name: str, logo: str, colour: str, guilds):
         self.db.insert_one(
             {
-                "_id": self.db.count(),
+                "_id": self.db.estimated_document_count(),
                 "prefix": prefix,
                 "name": name,
-                "members": "",
+                "members": [],
                 "logo": logo,
                 "wins": 0,
-                "colour": colour,
-                "discord_colour": discord_colour
+                "colour": colour
             }
         )
-        return self.info(name)
+        return self.info(name, guilds)
 
     # --------------------
 
@@ -62,16 +61,13 @@ class TeamsDB(object):
 
     # --------------------
 
-    def get_team(self, server: str) -> list:
+    def get_team(self, server: str, guilds) -> list[str]:
         results = self.db.find({'name': server})
-
         for result in results:
-            team = [f'\\{player}' if player.startswith('_') else player for player in result['members'].split(':')]
-            if '' in team:
-                team.clear()
-                return team
-            else:
-                return team
+            return [f'\\{player}' if player.startswith('_') else player for player in result['members']]
+        else:
+            self.add_team(server, server, "", "WHITE", guilds)
+            return []
 
     # --------------------
 
@@ -91,18 +87,21 @@ class TeamsDB(object):
 
     # --------------------
 
-    def add_player(self, server: str, player: str):
-        team = self.get_team(server)
-        if self.check_teams_for_player(player):
+    def add_player(self, server: str, player: str, guilds):
+        current_player_team = self.check_teams_for_player(player)
+        if current_player_team:
             return embeds.player_already_on_team(
                 player=player,
-                server=self.check_teams_for_player(player),
-                team=self.get_team(self.check_teams_for_player(player)),
-                logo=self.get_logo(self.check_teams_for_player(player)),
-                colour=self.get_colour(self.check_teams_for_player(player)))
+                server=current_player_team,
+                team=self.get_team(current_player_team, guilds),
+                logo=self.get_logo(current_player_team),
+                colour=guilds.get_role(config.teams.get(current_player_team)).color
+            )
         else:
+            team = self.get_team(server, guilds)
+            new_team_colour = guilds.get_role(config.teams.get(server)).color
             if len(team) > 4:
-                return embeds.full_team(server, team, self.get_logo(server), self.get_colour(server))
+                return embeds.full_team(server, team, self.get_logo(server), new_team_colour)
             else:
                 if player in team:
                     return embeds.player_already_on_team(
@@ -110,40 +109,41 @@ class TeamsDB(object):
                         server=server,
                         team=team,
                         logo=self.get_logo(server),
-                        colour=self.get_colour(server)
+                        colour=new_team_colour
                     )
                 else:
                     team.append(player)
-                    self.db.update_one({'name': server}, {'$set': {'members': ':'.join(team)}})
+                    self.db.update_one({'name': server}, {'$push': {'members': player}})
                     return embeds.add_player_success(
                         player=player,
                         server=server,
                         team=team,
                         head=get_head(player),
-                        colour=self.get_colour(server)
+                        colour=new_team_colour
                     )
 
     # --------------------
 
-    def remove_player(self, server: str, player: str):
-        team = self.get_team(server)
+    def remove_player(self, server: str, player: str, guilds):
+        team = self.get_team(server, guilds)
+        server_colour = guilds.get_role(config.teams.get(server)).color
         if player not in team:
             return embeds.player_not_on_team(
                 player=player,
                 server=server,
                 team=team,
                 logo=self.get_logo(server),
-                colour=self.get_colour(server)
+                colour=server_colour
             )
         else:
             team.remove(player)
-            self.db.update_one({'name': server}, {'$set': {'members': ':'.join(team)}})
+            self.db.update_one({'name': server}, {'$pull': {'members': player}})
             return embeds.remove_player_success(
                 player,
                 server,
                 team,
                 self.get_logo(server),
-                self.get_colour(server)
+                server_colour
             )
 
     # --------------------
@@ -153,12 +153,12 @@ class TeamsDB(object):
 
     # --------------------
 
-    def info(self, server: str):
+    def info(self, server: str, guilds):
         return embeds.team_info(
             server=server,
-            team=self.get_team(server),
+            team=self.get_team(server, guilds),
             logo=self.get_logo(server),
-            colour=self.get_colour(server)
+            colour=guilds.get_role(config.teams.get(server)).color
         )
 
     # --------------------

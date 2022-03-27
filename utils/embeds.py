@@ -73,7 +73,7 @@ def player_stats(name: str, stats: dict) -> discord.Embed:
 def team_info(server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'Info for {server}',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=logo)
@@ -85,7 +85,7 @@ def team_info(server: str, team: list, logo: str, colour: int) -> discord.Embed:
 def add_player_success(player: str, server: str, team: list, head: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'Added {player} to {server}\'s team',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=head)
@@ -97,7 +97,7 @@ def add_player_success(player: str, server: str, team: list, head: str, colour: 
 def full_team(server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'{server}\'s team is full',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=logo)
@@ -109,7 +109,7 @@ def full_team(server: str, team: list, logo: str, colour: int) -> discord.Embed:
 def player_already_on_team(player: str, server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'{player} is already on {server}\'s team',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=logo)
@@ -121,7 +121,7 @@ def player_already_on_team(player: str, server: str, team: list, logo: str, colo
 def player_not_on_team(player: str, server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'{player} is not on {server}\'s team',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=logo)
@@ -133,7 +133,7 @@ def player_not_on_team(player: str, server: str, team: list, logo: str, colour: 
 def remove_player_success(player: str, server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
         title=f'Successfully removed {player} from {server}\'s team',
-        colour=discord.Colour(colour),
+        colour=colour,
         description='**Current Team**\n' + '\n'.join(team)
     )
     embed.set_thumbnail(url=logo)
