@@ -164,8 +164,9 @@ class TeamsDB(object):
     # --------------------
 
     def to_json(self):
-        with open('../Teams.json', 'w') as f:
-            f.write(json.dumps([document for document in self.db.find()], indent=2))
+        pass
+        # with open('../Teams.json', 'w') as f:
+        #     f.write(json.dumps([document for document in self.db.find()], indent=2))
 
     # --------------------
 

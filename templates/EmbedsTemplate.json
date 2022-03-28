@@ -1,8 +1,9 @@
 {
   "faq": {
     "World Border": [
+      "The world border will begin with a size of 6000x6000 blocks and your team will be randomly placed in the map when the game starts",
       "The world border will begin to shrink after 10 minutes of the game starting.",
-      "The final size of the world border will be 20x20. When the game starts information will be displayed on your hud.",
+      "The final size of the world border will be 20x20 blocks. When the game starts information will be displayed on your hud.",
       "You can toggle this on and off by using /coords.",
       "There will be a 10 minute grace period and the world border will start moving at around 5 minutes.",
       "You will be able to place and break blocks outside the world border.",
@@ -10,19 +11,31 @@
     ],
     "Mods": [
       "This topic can get a little controversial at times but the main gist of it is don't use anything that you give an unfair advantage to others.",
-      "If possible it is best to play with a vanilla client or a client without many mods.",
-      "Tweakaroo is the most controversial mod I see and what I can say is if you don't need it, it is just best not to use it.",
-      "I have no way of knowing if you are abusing this, but spectators are watching and punishment can be given if you are seen abusing it."
+      "Performance mods are allowed, and you are allowed to set your gamma to max or use fullbright. MiniHud may be used if you want to have a smaller f3.",
+      "Any other mods are not permitted, I would recommend not using them as they may give you an advantange over players in vanilla.",
+      "Texture packs are allowed, as long as they do not give you an advantage compared to if you were to not play with them."
     ],
     "Teams": [
       "For main events, teams will always consist of 5 people.",
       "This does not mean you need a full team to participate in the events.",
       "For Practice Rounds or Fun Rules, team size may vary.",
-      "If you do not have a full team you are welcome to join another team for that event."
+      "If you do not have a full team you are welcome to join another team for that event.",
+      "Once the game has started if you type in chat you will automatically send it to your team chat.",
+      "To talk globally put a `!` before your message."
     ],
-    "Miscellaneous": [
-      "- Players will drop golden apples on death.\n",
-      "- The End is allowed.\n"
+    "FAQ": [
+      ":question: `What is UHC?`\n",
+      "UHC is a pvp game where players are put in a world to duel it out.",
+      "The catch is that you do not naturally regenerate, but you can heal by using suspicious stew and golden apples.",
+      "When you kill other players they drop golden apples.\n\n",
+      ":question: `What timezone is the UHC?`\n",
+      "The time in announcements is in your local time, the time is specifically for YOU!\n\n",
+      ":question: `What is allowed?`\n",
+      "Read the rules!\n\n",
+      ":question: `Can I stream the event?`\n",
+      "Yes. You are also welcome to share your steam in the share-content channel :)\n\n",
+      ":question: `How long is the event?`\n",
+      "Usually around 2 hours.\n\n"
     ],
     "colour": 65372
   },
@@ -46,8 +59,7 @@
       "teams, therefore not allowed.\n\n",
       ":scroll: `Exploits / Mods`\n",
       "Exploits are **strictly prohibited**.\n",
-      "As per mods, anything that would give you an advantage over\n",
-      "a vanilla client is not allowed. (Gentleman's Rules)\n\n",
+      "Gamma override is allowed, any resource pack that gives you an advantage over vanilla is not allowed, the same applies to mods\n\n",
       ":scroll: `Family Friendly In Public`\n",
       "When talking in a public voice chat or in general game chat try to stay as family friendly as possible\n\n",
       ":exclamation: `Gentleman's rules`\n",

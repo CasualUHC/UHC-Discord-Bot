@@ -19,8 +19,10 @@ class Admin(commands.Cog):
 
     @commands.command(name='faq')
     @commands.has_any_role('Devs', 'Administrator')
-    async def faq(self, ctx):
-        await ctx.send(embed=embeds.faq())
+    async def faq(self, ctx: SlashContext):
+        faq_embeds = embeds.faq()
+        for embed in faq_embeds:
+            await ctx.send(embed=embed)
 
     @commands.command(name='rules')
     @commands.has_any_role('Devs', 'Administrator')

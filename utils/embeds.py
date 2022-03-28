@@ -142,19 +142,35 @@ def remove_player_success(player: str, server: str, team: list, logo: str, colou
 
 # --------------------
 
-def faq() -> discord.Embed:
-    faq_config = config.embeds["faq"]
+def faq() -> list[discord.Embed]:
+    faq_config: dict = config.embeds["faq"]
+
+    embeds = []
 
     embed = discord.Embed(
-        title="UHC FAQ",
+        title="UHC INFO",
         color=faq_config["colour"]
     )
+
+    faq_config = faq_config.copy()
+    faq_field = faq_config.pop("FAQ")
 
     for field in faq_config:
         group = faq_config[field]
         if type(group) == list:
             embed.add_field(name=field, value=" ".join(faq_config[field]), inline=True)
-    return embed
+
+    embeds.append(embed)
+
+    embed = discord.Embed(
+        title="UHC FAQ",
+        color=faq_config["colour"],
+        description=" ".join(faq_field)
+    )
+
+    embeds.append(embed)
+
+    return embeds
 
 
 def rules() -> discord.Embed:
