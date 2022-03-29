@@ -3,14 +3,13 @@ import json
 import discord
 from mojang import MojangAPI
 from pymongo import MongoClient
-
-from utils import embeds, config
+from utils import config, embeds
 from utils.skins import get_head
 
 
 def format_name(name):
-    if name.startswith('_'):
-        return f'\\{name}'
+    if name.startswith("_"):
+        return f"\\{name}"
     else:
         return name
 
@@ -19,12 +18,15 @@ class TeamsDB(object):
     def __init__(self):
         self.uri = config.mongo_uri
         self.client = MongoClient(self.uri)
-        self.db = (self.client['UHC'])['teams']
+        self.db = (self.client["UHC"])["teams"]
 
     # --------------------
     def win_scoreboard(self):
         return embeds.wins(
-            win_list=[f'{result["name"]}: {result["wins"]}' for result in self.db.find({}).sort("wins", -1)]
+            win_list=[
+                f'{result["name"]}: {result["wins"]}'
+                for result in self.db.find({}).sort("wins", -1)
+            ]
         )
 
     # --------------------
@@ -38,7 +40,7 @@ class TeamsDB(object):
                 "members": [],
                 "logo": logo,
                 "wins": 0,
-                "colour": colour
+                "colour": colour,
             }
         )
         return self.info(name, guilds)
@@ -48,23 +50,26 @@ class TeamsDB(object):
     def check_teams_for_player(self, player: str) -> str:
 
         for server in self.db.find({}):
-            if player in server['members']:
-                return server['name']
+            if player in server["members"]:
+                return server["name"]
 
     # --------------------
 
     def get_wins(self, server: str) -> int:
-        results = self.db.find({'name': server})
+        results = self.db.find({"name": server})
 
         for result in results:
-            return result['wins']
+            return result["wins"]
 
     # --------------------
 
     def get_team(self, server: str, guilds) -> list[str]:
-        results = self.db.find({'name': server})
+        results = self.db.find({"name": server})
         for result in results:
-            return [f'\\{player}' if player.startswith('_') else player for player in result['members']]
+            return [
+                f"\\{player}" if player.startswith("_") else player
+                for player in result["members"]
+            ]
         else:
             self.add_team(server, server, "", "WHITE", guilds)
             return []
@@ -72,15 +77,15 @@ class TeamsDB(object):
     # --------------------
 
     def get_logo(self, server: str) -> str:
-        results = self.db.find({'name': server})
+        results = self.db.find({"name": server})
 
         for result in results:
-            return result['logo']
+            return result["logo"]
 
     # --------------------
 
     def get_colour(self, server: str) -> int:
-        results = self.db.find({'name': server})
+        results = self.db.find({"name": server})
 
         for result in results:
             return int(f'0x{result["discord_colour"]}', 16)
@@ -95,13 +100,15 @@ class TeamsDB(object):
                 server=current_player_team,
                 team=self.get_team(current_player_team, guilds),
                 logo=self.get_logo(current_player_team),
-                colour=guilds.get_role(config.teams.get(current_player_team)).color
+                colour=guilds.get_role(config.teams.get(current_player_team)).color,
             )
         else:
             team = self.get_team(server, guilds)
             new_team_colour = guilds.get_role(config.teams.get(server)).color
             if len(team) > 4:
-                return embeds.full_team(server, team, self.get_logo(server), new_team_colour)
+                return embeds.full_team(
+                    server, team, self.get_logo(server), new_team_colour
+                )
             else:
                 if player in team:
                     return embeds.player_already_on_team(
@@ -109,17 +116,17 @@ class TeamsDB(object):
                         server=server,
                         team=team,
                         logo=self.get_logo(server),
-                        colour=new_team_colour
+                        colour=new_team_colour,
                     )
                 else:
                     team.append(player)
-                    self.db.update_one({'name': server}, {'$push': {'members': player}})
+                    self.db.update_one({"name": server}, {"$push": {"members": player}})
                     return embeds.add_player_success(
                         player=player,
                         server=server,
                         team=team,
                         head=get_head(player),
-                        colour=new_team_colour
+                        colour=new_team_colour,
                     )
 
     # --------------------
@@ -133,23 +140,19 @@ class TeamsDB(object):
                 server=server,
                 team=team,
                 logo=self.get_logo(server),
-                colour=server_colour
+                colour=server_colour,
             )
         else:
             team.remove(player)
-            self.db.update_one({'name': server}, {'$pull': {'members': player}})
+            self.db.update_one({"name": server}, {"$pull": {"members": player}})
             return embeds.remove_player_success(
-                player,
-                server,
-                team,
-                self.get_logo(server),
-                server_colour
+                player, server, team, self.get_logo(server), server_colour
             )
 
     # --------------------
 
     def clear(self, server: str):
-        self.db.update_one({'name': server}, {'$set': {'members': []}})
+        self.db.update_one({"name": server}, {"$set": {"members": []}})
 
     # --------------------
 
@@ -158,7 +161,7 @@ class TeamsDB(object):
             server=server,
             team=self.get_team(server, guilds),
             logo=self.get_logo(server),
-            colour=guilds.get_role(config.teams.get(server)).color
+            colour=guilds.get_role(config.teams.get(server)).color,
         )
 
     # --------------------
@@ -175,20 +178,20 @@ class PlayersDB(object):
     def __init__(self):
         self.uri = config.mongo_uri
         self.client = MongoClient(self.uri)
-        self.db = (self.client['UHC'])['total_player_stats']
+        self.db = (self.client["UHC"])["total_player_stats"]
 
     def get_kills(self, player: str) -> int:
-        results = self.db.find({'name': player})
+        results = self.db.find({"name": player})
 
         for result in results:
-            return result['kills']
+            return result["kills"]
 
     def get_all_stats(self, player: str) -> discord.Embed:
         username = MojangAPI.get_username(MojangAPI.get_uuid(player))
-        results = self.db.find({'name': username})
+        results = self.db.find({"name": username})
         if results:
             for result in results:
-                del result['_id'], result['name']
+                del result["_id"], result["name"]
                 return embeds.player_stats(name=username, stats=result)
             else:
                 return embeds.stats_not_found(name=player)
@@ -196,5 +199,8 @@ class PlayersDB(object):
     def get_scoreboard(self, stat: str) -> discord.Embed:
         return embeds.scoreboard(
             stat=stat,
-            scores=[f'\\{result["name"]}\\: {result[stat]}' for result in self.db.find({}).sort(stat, -1)]
+            scores=[
+                "{}: {}".format(result["name"].replace("_", "\\_"), result[stat])
+                for result in self.db.find({}).sort(stat, -1)
+            ],
         )
