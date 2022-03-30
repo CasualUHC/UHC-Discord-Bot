@@ -10,25 +10,18 @@ class Players(commands.Cog):
         self.bot = bot
         self.db = PlayersDB()
 
-    @cog_ext.cog_slash(
-        name='stats',
-        guild_ids=config.guilds,
-        options=[
-            slash.ign
-        ]
-    )
+    @cog_ext.cog_slash(name="stats", guild_ids=config.guilds, options=[slash.ign])
     async def stats(self, ctx, ign: str):
         await ctx.send(embed=self.db.get_all_stats(player=ign))
 
     @cog_ext.cog_slash(
-        name='scoreboard',
+        name="scoreboard",
         guild_ids=config.guilds,
-        options=[
-            slash.scoreboard_options
-        ]
+        options=[slash.scoreboard_options, slash.scoreboard_show_all],
     )
-    async def scoreboard(self, ctx, stat):
-        await ctx.send(embed=self.db.get_scoreboard(stat=stat))
+    async def scoreboard(self, ctx, stat, show_all: bool = False):
+        (embed, scoreboard) = self.db.get_scoreboard(stat=stat, show_all=show_all)
+        await ctx.send(embed=embed, file=scoreboard)
 
 
 def setup(bot):

@@ -4,3 +4,4 @@ mojang==0.2.0
 pymongo==4.0.2
 websockets==10.2
 dnspython==2.2.1
+pillow==9.0.1

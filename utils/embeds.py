@@ -1,10 +1,14 @@
+from typing import Iterator
+
 import discord
+from PIL.Image import Image
 
 from utils import skins, config
 
 uhc_logo = 'https://cdn.discordapp.com/attachments/775083888602513439/804920103850344478/UHC_icon.png'
 
-letter_emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱', '🇲', '🇳', '🇴', '🇵', '🇶', '🇷', '🇸', '🇹']
+letter_emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱', '🇲', '🇳', '🇴', '🇵', '🇶',
+                 '🇷', '🇸', '🇹']
 
 
 # --------------------
@@ -34,13 +38,35 @@ def wins(win_list: list) -> discord.Embed:
 
 # --------------------
 
-def scoreboard(stat: str, scores: list) -> discord.Embed:
-    embed = discord.Embed(
-        title=stat.title(),
-        description='\n'.join(scores[0:10]),
-        colour=config.colour
-    )
-    embed.set_thumbnail(url=uhc_logo)
+def scoreboard(ign: list[str], img_name: str) -> discord.Embed:
+    embed = discord.Embed.from_dict({
+        'color': config.colour,
+        'thumbnail': {
+            'url': skins.get_body(ign[0])
+        },
+        'fields': [
+            {
+                'name': 'First Rank',
+                'value': ign[0],
+            },
+            {
+                'name': 'Second Rank',
+                'value': ign[1],
+            },
+            {
+                'name': 'Third Rank',
+                'value': ign[2],
+            },
+        ],
+        'image': {
+            'url': f'attachment://{img_name}'
+        },
+        'footer': {
+            'text': 'UHC Scoreboard',
+            'icon_url': uhc_logo
+        }
+    })
+
     return embed
 
 

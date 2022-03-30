@@ -78,6 +78,13 @@ scoreboard_options = create_option(
     ]
 )
 
+scoreboard_show_all = create_option(
+    name='show_all',
+    required=False,
+    option_type=5,
+    description='show all players'
+)
+
 server_prefix = create_option(
     name='server_prefix',
     required=True,
