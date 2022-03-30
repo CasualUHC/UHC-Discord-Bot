@@ -1,3 +1,4 @@
+import datetime
 from typing import Iterator
 
 import discord
@@ -59,26 +60,13 @@ def wins(win_list: list) -> discord.Embed:
 # --------------------
 
 
-def scoreboard(ign: list[str], img_name: str) -> discord.Embed:
+def scoreboard(stat: str, img_name: str) -> discord.Embed:
     embed = discord.Embed.from_dict(
         {
-            "color": config.colour,
-            "thumbnail": {"url": skins.get_body(ign[0])},
-            "fields": [
-                {
-                    "name": "First Rank",
-                    "value": ign[0],
-                },
-                {
-                    "name": "Second Rank",
-                    "value": ign[1],
-                },
-                {
-                    "name": "Third Rank",
-                    "value": ign[2],
-                },
-            ],
+            "title": f"{stat.capitalize()} Scoreboard",
+            "color": 0x7ed6df,
             "image": {"url": f"attachment://{img_name}"},
+            "timestamp": datetime.datetime.utcnow().isoformat(),
             "footer": {"text": "UHC Scoreboard", "icon_url": uhc_logo},
         }
     )

@@ -34,24 +34,24 @@ def scoreboard(stat: str, scores: list[dict], img_name: str) -> Image:
     total_width = (
         max(header_size[0], sum(size[0] for size in column_size.values())) + padding * 3
     )
-    total_height = header_size[1] + column_size["name"][1] + padding * 3
+    total_height = header_size[1] + column_size["name"][1] + padding * 3 + spacing
 
     image = Image.new("RGB", (total_width, total_height), color="#2c2f33")
     draw = ImageDraw.Draw(image)
 
     draw.text(
-        xy=(padding, header_size[1] + padding * 2),
+        xy=(padding + spacing, header_size[1] + padding * 2),
         text=columns["name"],
         font=MC_FONT,
-        fill="#ffffff",
+        fill="#BFBFBF",
         spacing=spacing,
     )
 
     draw.text(
-        xy=(padding * 2 + column_size["name"][0], header_size[1] + padding * 2),
+        xy=(padding * 2 + spacing + column_size["name"][0], header_size[1] + padding * 2),
         text=columns["values"],
         font=MC_FONT,
-        fill="#ffffff",
+        fill="#FF5555",
         spacing=spacing,
         align="right",
     )
@@ -60,7 +60,7 @@ def scoreboard(stat: str, scores: list[dict], img_name: str) -> Image:
         xy=((total_width - header_size[0]) / 2, padding),
         text=header,
         font=MC_FONT,
-        fill="#ffffff",
+        fill="#5555FF",
         spacing=spacing,
     )
 

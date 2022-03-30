@@ -16,6 +16,7 @@ class Players(commands.Cog):
 
     @cog_ext.cog_slash(
         name="scoreboard",
+        description="Shows the scoreboard for a given stat.",
         guild_ids=config.guilds,
         options=[slash.scoreboard_options, slash.scoreboard_show_all],
     )

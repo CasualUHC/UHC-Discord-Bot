@@ -203,8 +203,6 @@ class PlayersDB(object):
             for res in self.db.find({}).sort(stat, -1).limit(0 if show_all else 10)
             if res[stat] > 0
         ]
-        embed = embeds.scoreboard(
-            [res["name"] for res in results[:3]], img_name="scoreboard.png"
-        )
+        embed = embeds.scoreboard(stat=stat, img_name="scoreboard.png")
         img = image.scoreboard(stat=stat, scores=results, img_name="scoreboard.png")
         return embed, img
