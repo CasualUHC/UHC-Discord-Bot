@@ -2,6 +2,7 @@
 Convert the text into markdown safe text.
 """
 
+
 def escape(text):
     """
     Escape the text.
@@ -15,17 +16,20 @@ def bold(text):
     """
     return f"**{text}**"
 
+
 def italic(text):
     """
     Make the text italic.
     """
     return f"*{text}*"
 
+
 def block_code(text):
     """
     Make the text code.
     """
     return f"```{text}```"
+
 
 def inline_code(text):
     """

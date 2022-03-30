@@ -2,8 +2,8 @@ import io
 import os
 from operator import itemgetter
 
-from PIL import Image, ImageFont, ImageDraw
 from discord import File
+from PIL import Image, ImageDraw, ImageFont
 
 MC_FONT = ImageFont.truetype(
     os.path.join(os.getcwd(), "assets", "minecraft.ttf"), size=20
@@ -27,9 +27,13 @@ def scoreboard(stat: str, scores: list[dict], img_name: str) -> Image:
         "values": "\n".join(str(score[stat]) for score in scores),
     }
 
-    column_size = {k: draw.textsize(v, font=MC_FONT, spacing=spacing) for k, v in columns.items()}
+    column_size = {
+        k: draw.textsize(v, font=MC_FONT, spacing=spacing) for k, v in columns.items()
+    }
 
-    total_width = max(header_size[0], sum(size[0] for size in column_size.values())) + padding * 3
+    total_width = (
+        max(header_size[0], sum(size[0] for size in column_size.values())) + padding * 3
+    )
     total_height = header_size[1] + column_size["name"][1] + padding * 3
 
     image = Image.new("RGB", (total_width, total_height), color="#2c2f33")

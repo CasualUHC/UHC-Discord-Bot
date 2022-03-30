@@ -1,9 +1,10 @@
 import discord
-from PIL.Image import Image
 from discord import Embed
 from mojang import MojangAPI
+from PIL.Image import Image
 from pymongo import MongoClient
-from utils import config, embed, image
+
+from utils import config, embeds, image
 from utils.skins import get_head
 
 
@@ -197,7 +198,13 @@ class PlayersDB(object):
                 return embeds.stats_not_found(name=player)
 
     def get_scoreboard(self, stat: str, show_all: bool) -> tuple[Embed, Image]:
-        results = [res for res in self.db.find({}).sort(stat, -1).limit(0 if show_all else 10) if res[stat] > 0]
-        embed = embeds.scoreboard([res["name"] for res in results[:3]], img_name="scoreboard.png")
+        results = [
+            res
+            for res in self.db.find({}).sort(stat, -1).limit(0 if show_all else 10)
+            if res[stat] > 0
+        ]
+        embed = embeds.scoreboard(
+            [res["name"] for res in results[:3]], img_name="scoreboard.png"
+        )
         img = image.scoreboard(stat=stat, scores=results, img_name="scoreboard.png")
         return embed, img

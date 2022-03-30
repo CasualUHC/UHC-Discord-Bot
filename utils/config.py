@@ -1,6 +1,7 @@
 import json
 
-colour = 0xff66ff
+colour = 0xFF66FF
+prefix = "!"
 admins = []
 teams = {}
 mongo_uri = ""

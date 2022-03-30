@@ -14,7 +14,7 @@ class Websocket(commands.Cog):
                 message = await websocket.recv()
                 await chat_link.send(message)
         except websockets.exceptions.ConnectionClosed:
-            await chat_link.send('Connection to server has been lost')
+            await chat_link.send("Connection to server has been lost")
 
 
 def setup(bot):

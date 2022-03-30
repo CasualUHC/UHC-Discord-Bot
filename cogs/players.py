@@ -1,8 +1,8 @@
 from discord.ext import commands
 from discord_slash import cog_ext
 
+from utils import config, slash
 from utils.db import PlayersDB
-from utils import slash, config
 
 
 class Players(commands.Cog):
