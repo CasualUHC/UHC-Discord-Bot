@@ -22,8 +22,12 @@ class Players(commands.Cog):
     @decorators.params_wrapper(
         [choices.scoreboard_options, choices.scoreboard_show_all]
     )
-    async def scoreboard(self, interaction: discord.Interaction, stat: str, show_all: str = None):
-        (embed, scoreboard) = self.db.get_scoreboard(stat=stat, show_all=(show_all == "all"))
+    async def scoreboard(
+        self, interaction: discord.Interaction, stat: str, show_all: str = None
+    ):
+        (embed, scoreboard) = self.db.get_scoreboard(
+            stat=stat, show_all=(show_all == "all")
+        )
         await interaction.response.send_message(embed=embed, file=scoreboard)
 
 

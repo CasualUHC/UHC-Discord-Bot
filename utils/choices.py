@@ -51,9 +51,7 @@ scoreboard_show_all = Option(
     name="show_all",
     type=AppCommandOptionType.string,
     description="Whether to show all players or not.",
-    choices=[
-        Choice(name="All", value="All")
-    ],
+    choices=[Choice(name="All", value="All")],
 )
 
 server_prefix = Option(

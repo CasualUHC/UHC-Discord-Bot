@@ -52,7 +52,9 @@ class Teams(commands.Cog):
             await interaction.response.send_message.send(f"'{ign}' is not a valid IGN!")
         self.db.to_json()
 
-    @app_commands.command(name="removeplayer", description="Remove a player from a team")
+    @app_commands.command(
+        name="removeplayer", description="Remove a player from a team"
+    )
     @decorators.params_wrapper([choices.servers, choices.player_ign])
     @decorators.belongs_to_same_team()
     async def remove_player(
