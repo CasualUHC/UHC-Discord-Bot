@@ -1,5 +1,5 @@
 import discord
-from discord import Embed
+from discord import Embed, File
 from mojang import MojangAPI
 from PIL.Image import Image
 from pymongo import MongoClient
@@ -187,6 +187,17 @@ class PlayersDB(object):
         for result in results:
             return result["kills"]
 
+    def get_stat_image(self, player: str) -> tuple[Embed, File | None]:
+        username = MojangAPI.get_username(MojangAPI.get_uuid(player))
+        results = [res for res in self.db.find({"name": username})]
+        if results:
+            img_name = f"{username}_uhc_stats.png"
+            img = image.player_stats(name=username, scores=results[0], img_name=img_name)
+            embed = embeds.player_stats_image(name=username, img_name=img_name)
+            return embed, img
+        else:
+            return embeds.stats_not_found(name=player), None
+
     def get_all_stats(self, player: str) -> discord.Embed:
         username = MojangAPI.get_username(MojangAPI.get_uuid(player))
         results = self.db.find({"name": username})
@@ -197,7 +208,7 @@ class PlayersDB(object):
             else:
                 return embeds.stats_not_found(name=player)
 
-    def get_scoreboard(self, stat: str, show_all: bool) -> tuple[Embed, Image]:
+    def get_scoreboard(self, stat: str, show_all: bool) -> tuple[Embed, File | None]:
         results = [
             res
             for res in self.db.find({}).sort(stat, -1).limit(0 if show_all else 10)

@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils import choices, db, decorators
+from utils import choices, db, decorators, image
 
 
 class Players(commands.Cog):
@@ -13,7 +13,10 @@ class Players(commands.Cog):
     @app_commands.command(name="stats", description="Shows your stats.")
     @decorators.params_wrapper([choices.player_ign])
     async def stats(self, interaction: discord.Interaction, ign: str):
-        await interaction.response.send_message(embed=self.db.get_all_stats(player=ign))
+        (embed, scoreboard) = self.db.get_stat_image(player=ign)
+        if scoreboard is None:
+            scoreboard = discord.utils.MISSING
+        await interaction.response.send_message(embed=embed, file=scoreboard)
 
     @app_commands.command(
         name="scoreboard",

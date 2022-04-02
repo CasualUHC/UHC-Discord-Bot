@@ -100,6 +100,20 @@ def player_stats(name: str, stats: dict) -> discord.Embed:
 
 # --------------------
 
+def player_stats_image(name: str, img_name: str) -> discord.Embed:
+    embed = discord.Embed.from_dict(
+        {
+            "title": f"{name} Stats",
+            "color": 0x7ED6DF,
+            "image": {"url": f"attachment://{img_name}"},
+            "timestamp": datetime.datetime.utcnow().isoformat(),
+            "footer": {"text": "UHC Scoreboard", "icon_url": uhc_logo},
+        }
+    )
+
+    return embed
+
+# --------------------
 
 def team_info(server: str, team: list, logo: str, colour: int) -> discord.Embed:
     embed = discord.Embed(
