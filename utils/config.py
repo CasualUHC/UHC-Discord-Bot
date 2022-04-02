@@ -1,12 +1,15 @@
 import json
 
+import discord
+from discord.abc import Snowflake
+
 colour = 0xFF66FF
 prefix = "!"
 admins = []
 teams = {}
 mongo_uri = ""
 discord_token = ""
-guilds = []
+guilds: list[Snowflake] = []
 embeds = {}
 
 
@@ -22,7 +25,7 @@ def initialise() -> None:
         config = json.loads(file.read())
         mongo_uri = config["mongo"]
         discord_token = config["discord"]
-        guilds = config["guilds"]
+        guilds = [discord.Object(guild_id) for guild_id in config["guilds"]]
 
     with open("Embeds.json") as file:
         embeds = json.loads(file.read())

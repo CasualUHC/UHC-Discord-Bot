@@ -64,7 +64,7 @@ def scoreboard(stat: str, img_name: str) -> discord.Embed:
     embed = discord.Embed.from_dict(
         {
             "title": f"{stat.capitalize()} Scoreboard",
-            "color": 0x7ed6df,
+            "color": 0x7ED6DF,
             "image": {"url": f"attachment://{img_name}"},
             "timestamp": datetime.datetime.utcnow().isoformat(),
             "footer": {"text": "UHC Scoreboard", "icon_url": uhc_logo},

@@ -48,7 +48,10 @@ def scoreboard(stat: str, scores: list[dict], img_name: str) -> Image:
     )
 
     draw.text(
-        xy=(padding * 2 + spacing + column_size["name"][0], header_size[1] + padding * 2),
+        xy=(
+            padding * 2 + spacing + column_size["name"][0],
+            header_size[1] + padding * 2,
+        ),
         text=columns["values"],
         font=MC_FONT,
         fill="#FF5555",

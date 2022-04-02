@@ -1,40 +1,27 @@
-import discord_slash
+import discord
+from discord import app_commands
 from discord.ext import commands
-from discord_slash import cog_ext
-from discord_slash.model import SlashCommandPermissionType
-from discord_slash.utils.manage_commands import create_permission
+from discord.ext.commands import Context
 from mojang import MojangAPI
 
-from utils import config, slash
+from main import client
+from utils import choices, config, db, decorators
 from utils.config import admins
-from utils.db import TeamsDB
 
 
 class Teams(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = TeamsDB()
+        self.db = db.TeamsDB()
 
     @commands.command(name="wins")
-    async def _wins(self, ctx):
+    async def _wins(self, ctx: Context):
         await ctx.send(embed=self.db.win_scoreboard())
 
-    @cog_ext.cog_slash(
-        name="addTeam",
-        guild_ids=config.guilds,
-        options=[
-            slash.server_prefix,
-            slash.server_name,
-            slash.server_logo,
-            slash.server_colour,
-        ],
-        default_permission=False,
-        permissions={
-            config.guilds[0]: [
-                create_permission(admins[0], SlashCommandPermissionType.ROLE, True),
-            ]
-        },
+    @client.command(
+        name="addTeam", description="Add a team to the database", guilds=config.guilds
     )
+    @app_commands.checks.has_any_role(*admins)
     async def add_team(
         self, ctx, prefix: str, name: str, logo: str, server_colour: str
     ):
@@ -52,63 +39,48 @@ class Teams(commands.Cog):
     async def on_command_error(self, ctx, error):
         await ctx.send(error)
 
-    @cog_ext.cog_slash(
-        name="addPlayer", guild_ids=config.guilds, options=[slash.servers, slash.ign]
-    )
-    async def add_player(self, ctx: discord_slash.SlashContext, server: str, ign: str):
-        if ctx.guild.get_role(admins[0]) not in ctx.author.roles:
-            if ctx.guild.get_role(config.teams.get(server)) not in ctx.author.roles:
-                await ctx.send(f"You do not have permission add players to {server}")
-                return
-
+    @app_commands.command(name="addplayer")
+    @app_commands.checks.has_any_role("Administrator")
+    @decorators.params_wrapper([choices.servers, choices.player_ign])
+    async def add_player(self, interaction: discord.Interaction, server: str, ign: str):
         username = MojangAPI.get_username(MojangAPI.get_uuid(ign))
-
         if username:
-            await ctx.send(embed=self.db.add_player(server, username, ctx.guild))
+            await interaction.response.send_message(
+                embed=self.db.add_player(server, username, interaction.guild)
+            )
         else:
-            await ctx.send(f"'{ign}' is not a valid IGN!")
-
+            await interaction.response.send_message.send(f"'{ign}' is not a valid IGN!")
         self.db.to_json()
 
-    @cog_ext.cog_slash(
-        name="removePlayer", guild_ids=config.guilds, options=[slash.servers, slash.ign]
-    )
-    async def remove_player(self, ctx, server: str, ign: str):
-        if ctx.guild.get_role(admins[0]) not in ctx.author.roles:
-            if ctx.guild.get_role(config.teams.get(server)) not in ctx.author.roles:
-                await ctx.send(
-                    f"You do not have permission remove players from {server}"
-                )
-                return
-
+    @app_commands.command(name="removeplayer")
+    @decorators.params_wrapper([choices.servers, choices.player_ign])
+    @decorators.belongs_to_same_team()
+    async def remove_player(
+        self, interaction: discord.Interaction, server: str, ign: str
+    ):
         username = MojangAPI.get_username(MojangAPI.get_uuid(ign))
-
         if username:
-            await ctx.send(embed=self.db.remove_player(server, username, ctx.guild))
+            await interaction.response.send_message(
+                embed=self.db.remove_player(server, username, interaction.guild)
+            )
         else:
-            await ctx.send(f"'{ign}' is not a valid IGN")
-
+            await interaction.response.send_message(f"'{ign}' is not a valid IGN")
         self.db.to_json()
 
-    @cog_ext.cog_slash(
-        name="teamInfo", guild_ids=config.guilds, options=[slash.servers]
-    )
-    async def team_info(self, ctx, server: str):
-        await ctx.send(embed=self.db.info(server, ctx.guild))
-
+    @app_commands.command(name="teaminfo")
+    @decorators.params_wrapper([choices.servers])
+    async def team_info(self, interaction: discord.Interaction, server: str):
+        await interaction.response.send_message(
+            embed=self.db.info(server, interaction.guild)
+        )
         self.db.to_json()
 
-    @cog_ext.cog_slash(
-        name="clearTeam",
-        guild_ids=config.guilds,
-        options=[
-            slash.servers,
-        ],
-    )
-    async def clear(self, ctx, server: str):
+    @app_commands.command(name="clearteam")
+    @decorators.params_wrapper([choices.servers])
+    async def clear(self, interaction: discord.Interaction, server: str):
         self.db.clear(server)
-        await ctx.send(f"Successfully cleared {server}'s team")
+        await interaction.response.send_message(f"Successfully cleared {server}'s team")
 
 
-def setup(bot):
-    bot.add_cog(Teams(bot))
+async def setup(bot):
+    await bot.add_cog(Teams(bot))

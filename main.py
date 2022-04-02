@@ -2,47 +2,33 @@ import asyncio
 import pathlib
 
 import discord
-import websockets
-from discord.ext import commands
-from discord_slash import SlashCommand
+from discord.app_commands import CommandTree
+from discord.ext.commands import Bot
 
-from cogs.websocket import Websocket
 from utils import config
 
-intents = discord.Intents.all()
+client: Bot = Bot(command_prefix="!", help_command=None, intents=discord.Intents.all())
+tree: CommandTree = client.tree
 
 
-class UHCBot(commands.Bot):
-    async def start(self, *args, **kwargs):
-        async def callback(websocket):
-            cog: Websocket | None = self.get_cog("Websocket")
-            if not cog:
-                print("websocket cog not found")
-                return
-            return await cog.main(websocket)
-
-        async with websockets.serve(callback, "localhost", 12345):
-            return await super().start(*args, **kwargs)
-
-
-bot = UHCBot(command_prefix="!", help_command=None, intents=intents)
-
-slash = SlashCommand(bot, sync_commands=True)
-
-
-@bot.event
-async def on_ready():
+@client.event
+async def on_ready() -> None:
     print("UHC bot is online")
 
 
-def initialise() -> None:
+@client.event
+async def on_connect() -> None:
+    for guild in config.guilds:
+        await tree.sync(guild=guild)
+
+
+async def load() -> None:
     config.initialise()
 
     for path in pathlib.Path("./cogs").glob("*.py"):
-        bot.load_extension(f"cogs.{path.stem}")
-
-    bot.run(config.discord_token)
+        await client.load_extension(f"cogs.{path.stem}")
 
 
 if __name__ == "__main__":
-    initialise()
+    asyncio.run(load())
+    client.run(config.discord_token)

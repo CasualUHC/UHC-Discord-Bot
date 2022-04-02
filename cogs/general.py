@@ -6,5 +6,5 @@ class General(commands.Cog):
         self.bot = bot
 
 
-def setup(bot):
-    bot.add_cog(General(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(General(bot))

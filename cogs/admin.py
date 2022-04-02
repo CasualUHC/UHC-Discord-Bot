@@ -1,84 +1,86 @@
-import asyncio
-
 import discord
+from discord import app_commands
 from discord.ext import commands
-from discord_slash import SlashContext, cog_ext
 
-from utils import config, embeds, slash
-from utils.db import PlayersDB, TeamsDB
+from utils import choices, config, db, decorators, embeds
 
 
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = TeamsDB()
+        self.db = db.TeamsDB()
 
     @commands.command(name="json")
     @commands.has_any_role("Devs", "Administrator")
-    async def _json(self, ctx):
+    async def _json(self, ctx: commands.Context):
         self.db.to_json()
         await ctx.send(file=discord.File("Teams.json"))
 
     @commands.command(name="faq")
     @commands.has_any_role("Devs", "Administrator")
-    async def faq(self, ctx: SlashContext):
+    async def faq(self, ctx: commands.Context):
         faq_embeds = embeds.faq()
         for embed in faq_embeds:
             await ctx.send(embed=embed)
 
     @commands.command(name="rules")
     @commands.has_any_role("Devs", "Administrator")
-    async def rules(self, ctx):
+    async def rules(self, ctx: commands.Context):
         await ctx.send(embed=embeds.rules())
 
     @commands.command(name="all_stats")
     @commands.has_any_role("Devs", "Administrator")
-    async def all_stats(self, ctx):
-        database = PlayersDB()
+    async def all_stats(self, ctx: commands.Context):
+        database = db.PlayersDB()
         player_list = [result["name"] for result in database.db.find({})]
         for player in player_list:
             await ctx.send(embed=database.get_all_stats(player=player))
 
     @commands.command(name="reload")
     @commands.has_any_role("Devs", "Administrator")
-    async def reload(self, ctx):
+    async def reload(self, ctx: commands.Context):
         config.initialise()
         await ctx.send("Reloaded Config!")
 
-    @cog_ext.cog_slash(
+    @app_commands.command(
         name="shutdown",
         description="Gracefully shutdown the bot",
-        permissions={
-            config.guilds[0]: [
-                {"id": 800222768775823380, "type": 1, "permission": True}  # dev role
-            ]
-        },
-        guild_ids=config.guilds,
     )
-    async def shutdown(self, ctx):
+    @decorators.add_config_guilds()
+    @app_commands.checks.has_any_role("Devs", "Administrator")
+    async def shutdown(self, ctx: commands.Context):
         await ctx.send("Shutting Down...")
         await self.bot.close()
 
-    @cog_ext.cog_slash(
-        name="poll",
-        guild_ids=config.guilds,
-        description="create a poll",
-        options=slash.poll_options,
-    )
-    # probably a better way to do this, but I'm too damn tired to figure out kwargs bullshit right now
+    @app_commands.command(name="poll", description="Create a poll")
+    @decorators.params_wrapper(choices.poll_options)
     async def _poll(
-        self, ctx: SlashContext, poll_title: str, poll_description: str, **args
+        self,
+        interaction: discord.Interaction,
+        poll_title: str,
+        poll_description: str,
+        option_1: str,
+        option_2: str,
+        option_3: str = None,
+        option_4: str = None,
+        option_5: str = None,
+        option_6: str = None,
     ):
-        options = [option for option in args.values() if option]
-
-        msg = await ctx.send(
+        options = list(
+            filter(
+                lambda o: o is not None,
+                [option_1, option_2, option_3, option_4, option_5, option_6],
+            )
+        )
+        await interaction.response.send_message(
             embed=embeds.poll(
                 title=poll_title, description=poll_description, options=options
             )
         )
+        response = await interaction.original_message()
         for i in range(len(options)):
-            await msg.add_reaction(embeds.letter_emojis[i])
+            await response.add_reaction(embeds.letter_emojis[i])
 
 
-def setup(bot):
-    bot.add_cog(Admin(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Admin(bot))
