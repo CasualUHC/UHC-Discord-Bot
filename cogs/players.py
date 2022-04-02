@@ -10,7 +10,7 @@ class Players(commands.Cog):
         self.bot = bot
         self.db = db.PlayersDB()
 
-    @app_commands.command(name="stats")
+    @app_commands.command(name="stats", description="Shows your stats.")
     @decorators.params_wrapper([choices.player_ign])
     async def stats(self, interaction: discord.Interaction, ign: str):
         await interaction.response.send_message(embed=self.db.get_all_stats(player=ign))

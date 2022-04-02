@@ -39,7 +39,7 @@ class Teams(commands.Cog):
     async def on_command_error(self, ctx, error):
         await ctx.send(error)
 
-    @app_commands.command(name="addplayer")
+    @app_commands.command(name="addplayer", description="Add a player to a team")
     @app_commands.checks.has_any_role("Administrator")
     @decorators.params_wrapper([choices.servers, choices.player_ign])
     async def add_player(self, interaction: discord.Interaction, server: str, ign: str):
@@ -52,7 +52,7 @@ class Teams(commands.Cog):
             await interaction.response.send_message.send(f"'{ign}' is not a valid IGN!")
         self.db.to_json()
 
-    @app_commands.command(name="removeplayer")
+    @app_commands.command(name="removeplayer", description="Remove a player from a team")
     @decorators.params_wrapper([choices.servers, choices.player_ign])
     @decorators.belongs_to_same_team()
     async def remove_player(
@@ -67,7 +67,7 @@ class Teams(commands.Cog):
             await interaction.response.send_message(f"'{ign}' is not a valid IGN")
         self.db.to_json()
 
-    @app_commands.command(name="teaminfo")
+    @app_commands.command(name="teaminfo", description="Get team info")
     @decorators.params_wrapper([choices.servers])
     async def team_info(self, interaction: discord.Interaction, server: str):
         await interaction.response.send_message(
@@ -75,7 +75,7 @@ class Teams(commands.Cog):
         )
         self.db.to_json()
 
-    @app_commands.command(name="clearteam")
+    @app_commands.command(name="clearteam", description="Clear a team")
     @decorators.params_wrapper([choices.servers])
     async def clear(self, interaction: discord.Interaction, server: str):
         self.db.clear(server)

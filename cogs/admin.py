@@ -10,25 +10,25 @@ class Admin(commands.Cog):
         self.bot = bot
         self.db = db.TeamsDB()
 
-    @commands.command(name="json")
+    @commands.command(name="json", description="Get the Teams JSON for a player")
     @commands.has_any_role("Devs", "Administrator")
     async def _json(self, ctx: commands.Context):
         self.db.to_json()
         await ctx.send(file=discord.File("Teams.json"))
 
-    @commands.command(name="faq")
+    @commands.command(name="faq", description="Get the FAQ")
     @commands.has_any_role("Devs", "Administrator")
     async def faq(self, ctx: commands.Context):
         faq_embeds = embeds.faq()
         for embed in faq_embeds:
             await ctx.send(embed=embed)
 
-    @commands.command(name="rules")
+    @commands.command(name="rules", description="Get the rules for UHC")
     @commands.has_any_role("Devs", "Administrator")
     async def rules(self, ctx: commands.Context):
         await ctx.send(embed=embeds.rules())
 
-    @commands.command(name="all_stats")
+    @commands.command(name="all_stats", description="Get all stats")
     @commands.has_any_role("Devs", "Administrator")
     async def all_stats(self, ctx: commands.Context):
         database = db.PlayersDB()
@@ -36,7 +36,7 @@ class Admin(commands.Cog):
         for player in player_list:
             await ctx.send(embed=database.get_all_stats(player=player))
 
-    @commands.command(name="reload")
+    @commands.command(name="reload", description="Reload the configs")
     @commands.has_any_role("Devs", "Administrator")
     async def reload(self, ctx: commands.Context):
         config.initialise()
